@@ -16,14 +16,14 @@ import lombok.Data;
 public class Rate {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "BRAND_ID", nullable = false)
-    private Long brandId;
+    private Integer brandId;
 
     @Column(name = "PRODUCT_ID", nullable = false)
-    private Long productId;
+    private Integer productId;
 
     @Column(name = "START_DATE", nullable = false)
     private LocalDate startDate;
