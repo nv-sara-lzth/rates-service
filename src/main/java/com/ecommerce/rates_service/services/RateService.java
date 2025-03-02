@@ -1,19 +1,19 @@
 package com.ecommerce.rates_service.services;
 
 import java.time.LocalDate;
-import java.util.Optional;
 
 import com.ecommerce.rates_service.dto.RateDTO;
+import com.ecommerce.rates_service.dto.RateResponseDTO;
 
 public interface RateService {
 
-    RateDTO createRate(RateDTO rateDTO);
+    RateResponseDTO createRate(RateDTO rateDTO);
 
-    Optional<RateDTO> findRateById(Long id);
+    RateResponseDTO findRateById(Long id);
 
-    RateDTO updateRatePrice(Long id, Integer newPrice);
+    RateResponseDTO updateRatePrice(Long id, Integer newPrice);
 
-    void deleteRate(Long id);
+    RateResponseDTO deleteRate(Long id);
 
-    Optional<RateDTO> findApplicableRate(Integer brandId, Integer productId, LocalDate date);
+    RateResponseDTO findRateByBrandProductDate(Integer brandId, Integer productId, LocalDate date);
 }
