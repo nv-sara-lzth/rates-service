@@ -14,7 +14,7 @@ public class RateDTO {
     private Integer productId;
     private LocalDate startDate;
     private LocalDate endDate;
-    private Double price;
+    private String price;
     private String currencyCode;
     
 }

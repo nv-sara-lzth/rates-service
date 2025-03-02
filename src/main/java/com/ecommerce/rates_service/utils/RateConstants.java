@@ -22,6 +22,14 @@ public final class RateConstants {
 
         public static final String RATE_GENERIC_ERROR = "Error inesperado {0} ";
         public static final String RATE_NEGATIVE_PRICE = "El precio no puede ser negativo";
+        
+        public static final String NONE = "N/A";
+    }
+
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class CurrencyServiceValorDefecto {
+        public static final String BASE_PATH = "/v1/currencies";
+        public static final String GET_CURRENCY_BY_CODE = BASE_PATH + "/{0}";
     }
     
 }

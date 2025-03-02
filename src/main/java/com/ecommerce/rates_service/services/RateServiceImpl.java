@@ -19,10 +19,12 @@ public class RateServiceImpl implements RateService {
 
     private final RateRepository rateRepository;
     private final RateMapper rateMapper;
+    private final CurrencyService currencyService;
 
-    public RateServiceImpl(RateRepository rateRepository, RateMapper rateMapper) {
+    public RateServiceImpl(RateRepository rateRepository, RateMapper rateMapper, CurrencyService currencyService) {
         this.rateRepository = rateRepository;
         this.rateMapper = rateMapper;
+        this.currencyService = currencyService;
     }
 
     @Override
@@ -49,8 +51,10 @@ public class RateServiceImpl implements RateService {
             final var rateOptional = rateRepository.findById(id);
             if (rateOptional.isPresent()) {
                 final var rate = rateOptional.get();
+                RateDTO rateDTO = rateMapper.toDto(rate);
+                rateDTO.setPrice(currencyService.formatPrice(rate.getPrice(), rate.getCurrencyCode()));
                 log.info(format("Tarifa encontrada con id {0}", id));
-                return rateMapper.toResponseDto(rate, OperationResult.OK, OperationDescription.RATE_FOUND);
+                return rateMapper.toResponseDto(rateDTO, OperationResult.OK, OperationDescription.RATE_FOUND);
             }else {
                 log.warn(format("No se encontro ninguna tarifa con id {0}", id));
                 return rateMapper.toResponseDto(null, OperationResult.KO, OperationDescription.RATE_NOT_FOUND);
@@ -117,8 +121,11 @@ public class RateServiceImpl implements RateService {
             if (rateOptional.isPresent()) {
                 final var rate = rateOptional.get();
 
+                RateDTO rateDTO = rateMapper.toDto(rate);
+                rateDTO.setPrice(currencyService.formatPrice(rate.getPrice(), rate.getCurrencyCode()));
+
                 log.info(format("Tarifa encontrada para los filtros id de marca [{0}] id de producto [{1}] y fecha [{2}]", brandId, productId, date));
-                return rateMapper.toResponseDto(rate, OperationResult.OK, OperationDescription.RATE_FOUND);
+                return rateMapper.toResponseDto(rateDTO, OperationResult.OK, OperationDescription.RATE_FOUND);
             }else {
                 log.warn(format("No se encontro ninguna tarifa para id de marca [{0}] id de producto [{1}] y fecha [{2}]", brandId, productId, date));
                 return rateMapper.toResponseDto(null, OperationResult.KO, format("{0} para los filtros especificados", OperationDescription.RATE_NOT_FOUND));

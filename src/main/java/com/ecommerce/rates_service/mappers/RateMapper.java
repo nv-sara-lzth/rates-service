@@ -2,6 +2,7 @@ package com.ecommerce.rates_service.mappers;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.Named;
 
 import com.ecommerce.rates_service.dto.RateDTO;
 import com.ecommerce.rates_service.dto.RateResponseDTO;
@@ -10,18 +11,16 @@ import com.ecommerce.rates_service.model.Rate;
 @Mapper(componentModel = "spring")
 public interface RateMapper {
 
-    @Mapping(target = "price", source = "price")
     RateDTO toDto(Rate rate);
 
-    @Mapping(target = "price", source = "price")
+    @Mapping(target = "price", source = "price", qualifiedByName = "stringToInteger")
     Rate toEntity(RateDTO rateDTO);
 
-    default RateResponseDTO toResponseDto(Rate rate, String result, String description) {
-    return RateResponseDTO.builder()
-        .result(result)
-        .rate(rate != null ? toDto(rate) : null)
-        .description(description)
-        .build();
-}
+    RateResponseDTO toResponseDto(RateDTO rate, String result, String description);
+
+    @Named("stringToInteger")
+    default Integer stringToInteger(String price){
+        return price != null ? Integer.parseInt(price.replaceAll("[^0-9]", "")) : null;
+    }
     
 }
