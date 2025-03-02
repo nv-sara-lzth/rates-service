@@ -21,6 +21,7 @@ public final class RateConstants {
         public static final String RATE_NOT_FOUND = "Tarifa no encontrada"; 
 
         public static final String RATE_GENERIC_ERROR = "Error inesperado {0} ";
+        public static final String RATE_NEGATIVE_PRICE = "El precio no puede ser negativo";
     }
     
 }

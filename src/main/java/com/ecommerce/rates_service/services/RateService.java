@@ -15,5 +15,5 @@ public interface RateService {
 
     RateResponseDTO deleteRate(Long id);
 
-    RateResponseDTO findRateByBrandProductDate(Integer brandId, Integer productId, LocalDate date);
+    RateResponseDTO findRateByMultipleFilter(Integer brandId, Integer productId, LocalDate date);
 }

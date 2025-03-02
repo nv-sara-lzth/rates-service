@@ -65,6 +65,12 @@ public class RateServiceImpl implements RateService {
     public RateResponseDTO updateRatePrice(Long id, Integer newPrice) {
         log.info(format("Actualizando precio de tarifa con id {0}...", id));
         try {
+            if (newPrice != null && newPrice < 0) {
+                log.warn(format("Intento de actualizacion de precio de valor negativo en tarifa con id {0}", id));
+                return rateMapper.toResponseDto(null, OperationResult.KO, OperationDescription.RATE_NEGATIVE_PRICE);
+                
+            }
+
             final var rateOptional = rateRepository.findById(id);
             if (rateOptional.isPresent()) {
                 final var rate = rateOptional.get();
@@ -103,7 +109,7 @@ public class RateServiceImpl implements RateService {
     }
 
     @Override
-    public RateResponseDTO findRateByBrandProductDate(Integer brandId, Integer productId, LocalDate date) {
+    public RateResponseDTO findRateByMultipleFilter(Integer brandId, Integer productId, LocalDate date) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'findRateByBrandProductDate'");
     }
