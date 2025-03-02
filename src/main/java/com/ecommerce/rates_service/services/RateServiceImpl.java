@@ -110,8 +110,23 @@ public class RateServiceImpl implements RateService {
 
     @Override
     public RateResponseDTO findRateByMultipleFilter(Integer brandId, Integer productId, LocalDate date) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'findRateByBrandProductDate'");
+        log.info("Buscando tarifas con multiples filtros...");
+
+        try {
+            final var rateOptional = rateRepository.findByBrandIdAndProductIdAndDate(brandId, productId, date);
+            if (rateOptional.isPresent()) {
+                final var rate = rateOptional.get();
+
+                log.info(format("Tarifa encontrada para los filtros id de marca [{0}] id de producto [{1}] y fecha [{2}]", brandId, productId, date));
+                return rateMapper.toResponseDto(rate, OperationResult.OK, OperationDescription.RATE_FOUND);
+            }else {
+                log.warn(format("No se encontro ninguna tarifa para id de marca [{0}] id de producto [{1}] y fecha [{2}]", brandId, productId, date));
+                return rateMapper.toResponseDto(null, OperationResult.KO, format("{0} para los filtros especificados", OperationDescription.RATE_NOT_FOUND));
+            }
+        } catch (Exception e) {
+            log.error(format("Error inesperado buscando tarifa con id de marca [{0}] id de producto [{1}] y fecha [{2}] Causa [{3}]", brandId, productId, date, e.getMessage()));
+            return rateMapper.toResponseDto(null, OperationResult.KO, format(OperationDescription.RATE_GENERIC_ERROR, "buscando tarifa con filtro multiple"));
+        }
     }
 
 }
