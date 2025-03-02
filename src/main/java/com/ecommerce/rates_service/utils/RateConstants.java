@@ -19,6 +19,8 @@ public final class RateConstants {
         public static final String RATE_DELETED = "Tarifa con id {0} eliminada correctamente";
         public static final String RATE_FOUND = "Tarifa encontrada";
         public static final String RATE_NOT_FOUND = "Tarifa no encontrada"; 
+
+        public static final String RATE_GENERIC_ERROR = "Error inesperado {0} ";
     }
     
 }
