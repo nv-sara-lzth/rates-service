@@ -22,4 +22,4 @@ target/
 *.bak
 *.swp
 
-/src/main/resources/application.properties
+.env
