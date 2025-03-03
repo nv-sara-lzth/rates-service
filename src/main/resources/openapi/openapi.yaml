@@ -1,0 +1,193 @@
+openapi: 3.0.1
+info:
+  title: Rates service
+  version: v0
+servers:
+  - url: http://localhost:8085
+    description: Generated server url
+paths:
+  /rates/{id}/price:
+    put:
+      tags:
+        - rate-controller
+      summary: Update rate price
+      description: Updates the price of an existing rate
+      operationId: updateRatePrice
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: newPrice
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Price updated successfully
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RateResponseDTO'
+        '404':
+          description: Rate not found
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RateResponseDTO'
+  /rates:
+    post:
+      tags:
+        - rate-controller
+      summary: Create a new rate
+      description: Creates a new rate with the provided details
+      operationId: createRate
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RateDTO'
+        required: true
+      responses:
+        '200':
+          description: Rate created successfully
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RateResponseDTO'
+        '400':
+          description: Invalid input
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RateResponseDTO'
+  /rates/filter:
+    get:
+      tags:
+        - rate-controller
+      summary: Find rate by filters
+      description: Finds a rate by brand ID, product ID, and date
+      operationId: findRateByMultipleFilter
+      parameters:
+        - name: brandId
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: productId
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: date
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Rate found
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RateResponseDTO'
+        '404':
+          description: Rate not found
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RateResponseDTO'
+  /rates/(/{id}):
+    get:
+      tags:
+        - rate-controller
+      summary: Get rate by ID
+      description: Retrieves a rate by its ID with formatted price
+      operationId: findRateById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Rate found
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RateResponseDTO'
+        '404':
+          description: Rate not found
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RateResponseDTO'
+  /rates/{id}:
+    delete:
+      tags:
+        - rate-controller
+      summary: Delete rate by ID
+      description: Deletes a rate by its ID
+      operationId: deleteRate
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Rate deleted successfully
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RateResponseDTO'
+        '404':
+          description: Rate not found
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RateResponseDTO'
+components:
+  schemas:
+    RateDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        brandId:
+          type: integer
+          format: int32
+        productId:
+          type: integer
+          format: int32
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+        price:
+          type: string
+        currencyCode:
+          type: string
+    RateResponseDTO:
+      type: object
+      properties:
+        result:
+          type: string
+        description:
+          type: string
+        rate:
+          $ref: '#/components/schemas/RateDTO'
