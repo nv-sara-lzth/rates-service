@@ -2,6 +2,7 @@ package com.ecommerce.rates_service.services;
 
 import com.ecommerce.rates_service.dto.RateDTO;
 import com.ecommerce.rates_service.dto.RateResponseDTO;
+import com.ecommerce.rates_service.exceptions.RateNotFoundException;
 import com.ecommerce.rates_service.mappers.RateMapper;
 import com.ecommerce.rates_service.model.Rate;
 import com.ecommerce.rates_service.repositories.RateRepository;
@@ -17,7 +18,7 @@ import java.util.Optional;
 
 import static com.ecommerce.rates_service.utils.RateConstants.OperationDescription.*;
 import static com.ecommerce.rates_service.utils.RateConstants.OperationResult.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -92,13 +93,10 @@ class RateServiceImplTest {
     @Test
     void findRateById_notFound() {
         when(rateRepository.findById(1L)).thenReturn(Optional.empty());
-        when(rateMapper.toResponseDto(null, KO, RATE_NOT_FOUND))
-            .thenReturn(RateResponseDTO.builder().result(KO).description(RATE_NOT_FOUND).build());
 
-        RateResponseDTO result = rateService.findRateById(1L);
-
-        assertEquals(KO, result.getResult());
-        assertEquals(RATE_NOT_FOUND, result.getDescription());
+        assertThrows(RateNotFoundException.class, () -> rateService.findRateById(1L));
+        verify(rateRepository, times(1)).findById(1L);
+        verify(rateMapper, never()).toDto(any());
     }
 
     @Test
@@ -113,6 +111,16 @@ class RateServiceImplTest {
         assertEquals(OK, result.getResult());
         assertEquals(RATE_UPDATED, result.getDescription());
         verify(rateRepository, times(1)).save(rate);
+        assertEquals(2000, rate.getPrice());
+    }
+
+    @Test
+    void updateRatePrice_notFound() {
+        when(rateRepository.findById(1L)).thenReturn(Optional.empty());
+
+        assertThrows(RateNotFoundException.class, () -> rateService.updateRatePrice(1L, 2000));
+        verify(rateRepository, times(1)).findById(1L);
+        verify(rateRepository, never()).save(any());
     }
 
     @Test
@@ -132,16 +140,32 @@ class RateServiceImplTest {
     }
 
     @Test
+    void findRateByMultipleFilter_notFound() {
+        when(rateRepository.findByBrandIdAndProductIdAndDate(1, 1, LocalDate.parse("2023-06-15")))
+            .thenReturn(Optional.empty());
+
+        assertThrows(RateNotFoundException.class, () -> 
+            rateService.findRateByMultipleFilter(1, 1, LocalDate.parse("2023-06-15")));
+        verify(rateRepository, times(1)).findByBrandIdAndProductIdAndDate(1, 1, LocalDate.parse("2023-06-15"));
+    }
+
+    @Test
     void deleteRate_success() {
         when(rateRepository.findById(1L)).thenReturn(Optional.of(rate));
         doNothing().when(rateRepository).deleteById(1L);
-        when(rateMapper.toResponseDto(null, OK, "Tarifa con id 1 eliminada correctamente"))
-            .thenReturn(RateResponseDTO.builder().result(OK).description("Tarifa con id 1 eliminada correctamente").build());
 
-        RateResponseDTO result = rateService.deleteRate(1L);
+        rateService.deleteRate(1L);
 
-        assertEquals(OK, result.getResult());
-        assertEquals("Tarifa con id 1 eliminada correctamente", result.getDescription());
+        verify(rateRepository, times(1)).findById(1L);
         verify(rateRepository, times(1)).deleteById(1L);
+    }
+
+    @Test
+    void deleteRate_notFound() {
+        when(rateRepository.findById(1L)).thenReturn(Optional.empty());
+
+        assertThrows(RateNotFoundException.class, () -> rateService.deleteRate(1L));
+        verify(rateRepository, times(1)).findById(1L);
+        verify(rateRepository, never()).deleteById(any());
     }
 }

@@ -17,6 +17,8 @@ import com.ecommerce.rates_service.utils.RateConstants.OperationResult;
 import lombok.extern.slf4j.Slf4j;
 import static java.text.MessageFormat.format;
 
+import java.text.MessageFormat;
+
 @Service
 @Slf4j
 public class RateServiceImpl implements RateService {
@@ -42,13 +44,13 @@ public class RateServiceImpl implements RateService {
 
     @Override
     public RateResponseDTO findRateById(Long id) {
-        log.info(format("Buscando tarifa con id {}...", id));
-        Rate rate = rateRepository.findById(id)
-                .orElseThrow(() -> new RateNotFoundException("Rate with id " + id + " not found"));
-        RateDTO rateDTO = rateMapper.toDto(rate);
-        rateDTO.setPrice(currencyService.formatPrice(rate.getPrice(), rate.getCurrencyCode()));
-        log.info(format("Tarifa encontrada con id {}", id));
-        return rateMapper.toResponseDto(rateDTO, OperationResult.OK, OperationDescription.RATE_FOUND);
+        log.info("Buscando tarifa con id {}...", id);
+    Rate rate = rateRepository.findById(id)
+        .orElseThrow(() -> new RateNotFoundException("Rate with id " + id + " not found"));
+    RateDTO rateDTO = rateMapper.toDto(rate);
+    rateDTO.setPrice(currencyService.formatPrice(rate.getPrice(), rate.getCurrencyCode()));
+    log.info(format("Tarifa encontrada con id {0}", id));
+    return rateMapper.toResponseDto(rateDTO, OperationResult.OK, OperationDescription.RATE_FOUND);
     }
 
     @Override
