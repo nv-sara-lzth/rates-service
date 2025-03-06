@@ -13,7 +13,7 @@ public interface RateService {
 
     RateResponseDTO updateRatePrice(Long id, Integer newPrice);
 
-    RateResponseDTO deleteRate(Long id);
+    void deleteRate(Long id);
 
     RateResponseDTO findRateByMultipleFilter(Integer brandId, Integer productId, LocalDate date);
 }
