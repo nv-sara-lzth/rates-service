@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import java.time.LocalDate;
 
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -36,13 +37,13 @@ public class RateController {
 
     @PostMapping
     @Operation(summary = "Create a new rate", description = "Creates a new rate with the provided details")@ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Rate created successfully"),
+        @ApiResponse(responseCode = "201", description = "Rate created successfully"),
         @ApiResponse(responseCode = "400", description = "Invalid input")
     })
     public ResponseEntity<RateResponseDTO> createRate(@RequestBody RateDTO rateDTO) {
         RateResponseDTO response = rateService.createRate(rateDTO);
         
-        return ResponseEntity.ok(response);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @GetMapping("(/{id})")
@@ -71,12 +72,12 @@ public class RateController {
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete rate by ID", description = "Deletes a rate by its ID")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Rate deleted successfully"),
+        @ApiResponse(responseCode = "204", description = "Rate deleted successfully"),
         @ApiResponse(responseCode = "404", description = "Rate not found")
     })
     public ResponseEntity<RateResponseDTO> deleteRate(@PathVariable Long id) {
-        RateResponseDTO response = rateService.deleteRate(id);
-        return ResponseEntity.ok(response);
+        rateService.deleteRate(id);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/filter")
